@@ -2,11 +2,13 @@
 
 namespace VismaBookLibrary.Models
 {
-    public class Lending
+    public class Lending : IModel
     {
+        public int Id { get; set; }
+        
         public int BookId { get; set; }
 
-        public int ClientId { get; set; }
+        public int ReaderId { get; set; }
 
         public DateTime LendingDate { get; set; }
 

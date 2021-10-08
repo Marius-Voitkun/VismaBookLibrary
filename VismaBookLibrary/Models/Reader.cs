@@ -1,6 +1,6 @@
 ﻿namespace VismaBookLibrary.Models
 {
-    public class Client
+    public class Reader : IModel
     {
         public int Id { get; set; }
 

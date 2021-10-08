@@ -5,4 +5,27 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="DAL\Data\" />
+    <Folder Include="DAL\Data\LastIds" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Services\IFileService.cs" />
+    <Compile Remove="Services\JsonFileService.cs" />
+    <Compile Remove="Data\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Data\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Data\**" />
+  </ItemGroup>
+
 </Project>

@@ -2,7 +2,7 @@
 
 namespace VismaBookLibrary.Models
 {
-    public class Book
+    public class Book : IModel
     {
         public int Id { get; set; }
 
