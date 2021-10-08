@@ -54,7 +54,7 @@ namespace VismaBookLibrary
                 case "list-books":
                     return new DataTransferHelper
                     {
-                        Message = await _booksService.GetBooksAsync()
+                        Message = await _booksService.GetBooksAsync(command)
                     };
                 
                 case "list-readers":
@@ -146,6 +146,9 @@ namespace VismaBookLibrary
 > delete-book [bookId]
 > delete-reader [readerId]
 > list-books
+> list-books -f-[filteringProperty] [filteringValue]
+    e.g.: list-books -f-author ""Andrew Hunt"" -f-available -f-language English
+    (please note that only double-quotes are valid)
 > list-readers
 > return-book [bookId]
 > take-book [bookId] [readerId] [numberOfDays]
