@@ -12,11 +12,13 @@ namespace VismaBookLibrary
     {
         private readonly BooksService _booksService;
         private readonly ReadersService _readersService;
+        private readonly LendingsService _lendingsService;
 
-        public CommandHandler(IUnitOfWork unitOfWork)
+        public CommandHandler(IUnitOfWork unitOfWork, short maxLendingPeriodInDays, byte maxNumberOfBooksPerReader)
         {
             _booksService = new BooksService(unitOfWork);
             _readersService = new ReadersService(unitOfWork);
+            _lendingsService = new LendingsService(unitOfWork, maxLendingPeriodInDays, maxNumberOfBooksPerReader);
         }
 
         public async Task<DataTransferHelper> IdentifyCommandAsync(string command)
@@ -62,19 +64,31 @@ namespace VismaBookLibrary
                     };
 
                 case "return-book":
-                    return new DataTransferHelper();
+                    return new DataTransferHelper
+                    {
+                        Message = await _lendingsService.ReturnBookAsync(command)
+                    };
 
                 case "take-book":
-                    return new DataTransferHelper();
+                    return new DataTransferHelper
+                    {
+                        Message = await _lendingsService.TakeBookAsync(command)
+                    };
 
                 case "help":
-                    return new DataTransferHelper();
+                    return new DataTransferHelper
+                    {
+                        Message = GenerateHelpMessage()
+                    };
 
                 case "exit":
                     return new DataTransferHelper();
 
                 default:
-                    return new DataTransferHelper();
+                    return new DataTransferHelper
+                    {
+                        Message = "The command was not recognized."
+                    };
             }
         }
 
@@ -121,6 +135,22 @@ namespace VismaBookLibrary
                 "E-mail: ",
                 "Phone number: "
             };
+        }
+
+        private string GenerateHelpMessage()
+        {
+            return 
+@$"The following commands are available:
+> add-book
+> add-reader
+> delete-book [bookId]
+> delete-reader [readerId]
+> list-books
+> list-readers
+> return-book [bookId]
+> take-book [bookId] [readerId] [numberOfDays]
+> help
+> exit";
         }
     }
 }

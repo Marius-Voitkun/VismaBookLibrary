@@ -29,7 +29,7 @@ Name: {book.Name}
 Author: {book.Author}
 Category: {book.Category}
 Language: {book.Language}
-Publication date: {book.PublicationDate}
+Publication date: {book.PublicationDate.ToShortDateString()}
 ISBN: {book.ISBN}
 Is lent: {book.IsLent}
 ";

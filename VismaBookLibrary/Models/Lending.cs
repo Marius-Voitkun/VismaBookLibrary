@@ -14,6 +14,6 @@ namespace VismaBookLibrary.Models
 
         public DateTime LentUntil { get; set; }
 
-        public DateTime ReturnDate { get; set; }
+        public DateTime? ReturnDate { get; set; }
     }
 }

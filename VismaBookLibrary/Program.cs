@@ -11,7 +11,10 @@ namespace VismaBookLibrary
     {
         static async Task Main()
         {
-            var commandHandler = new CommandHandler(new UnitOfWork());
+            short maxLendingPeriodInDays = 60;
+            byte maxNumberOfBooksPerReader = 3;
+            
+            var commandHandler = new CommandHandler(new UnitOfWork(), maxLendingPeriodInDays, maxNumberOfBooksPerReader);
 
             string command = "";
 
