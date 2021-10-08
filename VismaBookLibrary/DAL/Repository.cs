@@ -31,6 +31,12 @@ namespace VismaBookLibrary.DAL
             return JsonConvert.DeserializeObject<List<T>>(json);
         }
 
+        public async Task<T> GetAsync(int id)
+        {
+            var entities = await GetAllAsync();
+            return entities.SingleOrDefault(e => e.Id == id);
+        }
+
         public async Task AddAsync(T entity)
         {
             var entities = await GetAllAsync();
@@ -39,6 +45,7 @@ namespace VismaBookLibrary.DAL
                                entities.Select(e => e.Id).Max() :
                                0;
             var latestId = await GetLatestIdAsync();
+            
             entity.Id = Math.Max(highestId, latestId) + 1;
             await SaveLatestIdAsync(entity.Id);
             

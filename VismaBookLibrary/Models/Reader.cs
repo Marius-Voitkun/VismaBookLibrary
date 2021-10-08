@@ -11,5 +11,7 @@
         public string Email { get; set; }
 
         public string PhoneNo { get; set; }
+
+        public byte TakenBooksCount { get; set; }
     }
 }

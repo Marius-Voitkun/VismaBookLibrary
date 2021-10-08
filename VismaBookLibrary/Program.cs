@@ -13,27 +13,35 @@ namespace VismaBookLibrary
         {
             var commandHandler = new CommandHandler(new UnitOfWork());
 
-            Console.WriteLine("Type a command. For more information type \"help\".");
-
             string command = "";
 
             while (command.ToLower() != "exit")
             {
+                Console.WriteLine("\nType a command. For more information type \"help\".");
+                Console.Write("> ");
+                
                 command = Console.ReadLine();
 
-                var messages = commandHandler.IdentifyCommand(command);
+                var response = await commandHandler.IdentifyCommandAsync(command);
 
-                if (messages != null)
+                if (response.Message != null)
+                    Console.WriteLine("\n" + response.Message);
+
+                if (response.NeedsAnswerCollecting == true)
                 {
+                    Console.WriteLine();
                     var answers = new List<string> { command.Split(' ')[0] };
 
-                    foreach (var message in messages)
+                    foreach (var request in response.Requests)
                     {
-                        Console.Write(message);
+                        Console.Write(request);
                         answers.Add(Console.ReadLine());
                     }
 
-                    await commandHandler.ProcessAnswersAsync(answers);
+                    var secondaryResponse = await commandHandler.ProcessAnswersAsync(answers);
+                    
+                    if (secondaryResponse.Message != null)
+                        Console.WriteLine("\n" + secondaryResponse.Message);
                 }
             }
         }

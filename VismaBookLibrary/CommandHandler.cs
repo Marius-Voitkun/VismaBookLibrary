@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using VismaBookLibrary.DAL;
 using VismaBookLibrary.Models;
 using VismaBookLibrary.Services;
@@ -9,53 +10,92 @@ namespace VismaBookLibrary
 {
     public class CommandHandler
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly BooksService _booksService;
+        private readonly ReadersService _readersService;
 
         public CommandHandler(IUnitOfWork unitOfWork)
         {
-            _unitOfWork = unitOfWork;
+            _booksService = new BooksService(unitOfWork);
+            _readersService = new ReadersService(unitOfWork);
         }
 
-        public List<string> IdentifyCommand(string command)
+        public async Task<DataTransferHelper> IdentifyCommandAsync(string command)
         {
             switch (command.Split(' ')[0].ToLower())
             {
-                case "add":
-                    return GenerateMessagesForAddingBook();
+                case "add-book":
+                    return new DataTransferHelper
+                    {
+                        NeedsAnswerCollecting = true,
+                        Requests = GenerateMessagesForAddingBook()
+                    };
 
-                case "delete":
-                    return null;
+                case "add-reader":
+                    return new DataTransferHelper
+                    {
+                        NeedsAnswerCollecting = true,
+                        Requests = GenerateMessagesForAddingReader()
+                    };
+                
+                case "delete-book":
+                    return new DataTransferHelper
+                    {
+                        Message = await _booksService.DeleteBookAsync(command)
+                    };
+                
+                case "delete-reader":
+                    return new DataTransferHelper
+                    {
+                        Message = await _readersService.DeleteReaderAsync(command)
+                    };
 
-                case "list":
-                    return null;
+                case "list-books":
+                    return new DataTransferHelper
+                    {
+                        Message = await _booksService.GetBooksAsync()
+                    };
+                
+                case "list-readers":
+                    return new DataTransferHelper
+                    {
+                        Message = await _readersService.GetReadersAsync()
+                    };
 
-                case "take":
-                    return null;
+                case "return-book":
+                    return new DataTransferHelper();
 
-                case "return":
-                    return null;
+                case "take-book":
+                    return new DataTransferHelper();
 
                 case "help":
-                    return null;
+                    return new DataTransferHelper();
 
                 case "exit":
-                    return null;
+                    return new DataTransferHelper();
 
                 default:
-                    return null;
+                    return new DataTransferHelper();
             }
         }
 
-        public async Task ProcessAnswersAsync(List<string> answers)
+        public async Task<DataTransferHelper> ProcessAnswersAsync(List<string> answers)
         {
             switch (answers[0])
             {
-                case "add":
-                    await AddNewBookAsync(answers);
-                    break;
+                case "add-book":
+                    return new DataTransferHelper
+                    {
+                        Message = await _booksService.AddNewBookAsync(answers)
+                    };
 
+                case "add-reader":
+                    return new DataTransferHelper
+                    {
+                        Message = await _readersService.AddNewReaderAsync(answers)
+                    };
+                
                 default:
-                    throw new ArgumentException("Command not recognized.");
+                    return new DataTransferHelper();
             }
         }
 
@@ -72,19 +112,15 @@ namespace VismaBookLibrary
             };
         }
 
-        public async Task AddNewBookAsync(List<string> args)
+        private List<string> GenerateMessagesForAddingReader()
         {
-            var book = new Book
+            return new List<string>
             {
-                Name = args[1],
-                Author = args[2],
-                Category = args[3],
-                Language = args[4],
-                PublicationDate = DateTime.Parse(args[5]),
-                ISBN = args[6]
+                "First name: ",
+                "Last name: ",
+                "E-mail: ",
+                "Phone number: "
             };
-
-            await _unitOfWork.Books.AddAsync(book);
         }
     }
 }
