@@ -21,14 +21,16 @@ namespace VismaBookLibrary.DAL
 
         public async Task<List<T>> GetAllAsync()
         {
-            if (!File.Exists(_dataPath))
+            try
+            {
+                var json = await File.ReadAllTextAsync(_dataPath);
+                return JsonConvert.DeserializeObject<List<T>>(json);
+            }
+            catch (Exception)
             {
                 await File.WriteAllTextAsync(_dataPath, "[]");
+                return new List<T>();
             }
-
-            string json = await File.ReadAllTextAsync(_dataPath);
-
-            return JsonConvert.DeserializeObject<List<T>>(json);
         }
 
         public async Task<T> GetAsync(int id)
@@ -71,7 +73,11 @@ namespace VismaBookLibrary.DAL
         {
             var entities = await GetAllAsync();
 
-            entities.Remove(entities.SingleOrDefault(e => e.Id == entity.Id));
+            bool deleted = entities.Remove(entities.SingleOrDefault(e => e.Id == entity.Id));
+            
+            if (deleted == false)
+                throw new ArgumentException("Entity not found.");
+            
             entities.Add(entity);
             
             await File.WriteAllTextAsync(_dataPath, JsonConvert.SerializeObject(entities.OrderBy(e => e.Id)));

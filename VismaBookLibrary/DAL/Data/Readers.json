@@ -1,1 +1,1 @@
-[{"Id":1,"FirstName":"John","LastName":"Smith","Email":"j.smith@gmail.com","PhoneNo":"+37061234567","TakenBooksCount":0},{"Id":2,"FirstName":"Mary","LastName":"Williams","Email":"m.williams@gmail.com","PhoneNo":"+37069876543","TakenBooksCount":0}]
+[{"Id":1,"FirstName":"John","LastName":"Smith","Email":"j.smith@gmail.com","PhoneNo":"+37061234567","TakenBooksCount":0},{"Id":2,"FirstName":"Mary","LastName":"Williams","Email":"m.williams@gmail.com","PhoneNo":"+37069876543","TakenBooksCount":1}]

@@ -19,6 +19,9 @@ namespace VismaBookLibrary.Services
         {
             var readers = await _unitOfWork.Readers.GetAllAsync();
 
+            if (readers.Count == 0)
+                return "No readers were found.";
+            
             var readersInfo = "";
 
             foreach (var reader in readers)
@@ -38,6 +41,9 @@ Number of taken books: {reader.TakenBooksCount}
         
         public async Task<string> AddNewReaderAsync(List<string> args)
         {
+            if (args.Count != 5)
+                throw new ArgumentException("The number of arguments does not match");
+            
             try
             {
                 var reader = new Reader
@@ -59,6 +65,11 @@ Number of taken books: {reader.TakenBooksCount}
         
         public async Task<string> DeleteReaderAsync(string command)
         {
+            var args = command.Split(' ');
+
+            if (args.Length != 2)
+                return "The command could not be processed.";
+            
             int id = 0;
             
             try

@@ -2,21 +2,19 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using VismaBookLibrary.DAL;
-using VismaBookLibrary.Models;
-using VismaBookLibrary.Services;
 
 namespace VismaBookLibrary
 {
-    class Program
+    static class Program
     {
         static async Task Main()
         {
-            short maxLendingPeriodInDays = 60;
-            byte maxNumberOfBooksPerReader = 3;
+            const short maxLendingPeriodInDays = 60;
+            const byte maxNumberOfBooksPerReader = 3;
             
             var commandHandler = new CommandHandler(new UnitOfWork(), maxLendingPeriodInDays, maxNumberOfBooksPerReader);
 
-            string command = "";
+            var command = "";
 
             while (command.ToLower() != "exit")
             {

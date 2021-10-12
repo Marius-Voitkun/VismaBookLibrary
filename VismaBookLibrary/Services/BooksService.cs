@@ -21,7 +21,10 @@ namespace VismaBookLibrary.Services
             var books = await _unitOfWork.Books.GetAllAsync();
 
             var filteredBooks = FilterBooks(books, command);
-            
+
+            if (filteredBooks.Count == 0)
+                return "No books with given criteria were found.";
+
             var booksInfo = "";
 
             foreach (var book in filteredBooks)
@@ -45,6 +48,9 @@ Is lent: {book.IsLent}
         {
             var filteringCriteria = ExtractFilteringCriteria(command);
 
+            if (filteringCriteria.Count == 0)
+                return books;
+
             foreach (var criterion in filteringCriteria)
             {
                 var property = criterion.Key.ToLower();
@@ -55,13 +61,13 @@ Is lent: {book.IsLent}
                     books = FilterBooksByAvailability(books, true);
                     continue;
                 }
-                
+
                 if (property == "available")
                 {
                     books = FilterBooksByAvailability(books, false);
                     continue;
                 }
-                
+
                 property = char.ToUpper(property[0]) + property.Substring(1);
                 if (property.ToLower() == "isbn")
                     property = property.ToUpper();
@@ -70,11 +76,10 @@ Is lent: {book.IsLent}
                 {
                     books = books.Where(b => ((string)b.GetType().GetProperty(property)
                                                         ?.GetValue(b)).ToLower().Contains(value))
-                                                    .ToList();
+                                                .ToList();
                 }
                 catch (Exception)
                 {
-                    continue;
                 }
             }
 
@@ -84,9 +89,9 @@ Is lent: {book.IsLent}
         private Dictionary<string, string> ExtractFilteringCriteria(string command)
         {
             var args = command.Split(' ');
-            
+
             var filteringCriteria = new Dictionary<string, string>();
-            
+
             for (var i = 1; i < args.Length; i++)
             {
                 if (args[i].StartsWith("-f-"))
@@ -100,7 +105,7 @@ Is lent: {book.IsLent}
                         for (var a = i + 1; a < args.Length; a++)
                         {
                             value += " " + args[a];
-                            
+
                             if (args[a].EndsWith('"'))
                             {
                                 i = a;
@@ -110,12 +115,12 @@ Is lent: {book.IsLent}
                         }
                     }
                     // Handling situation when value for filtering is without quotes
-                    else if (i < args.Length - 1)
+                    else if (i < args.Length - 1 && !args[i + 1].StartsWith("-f-"))
                     {
                         value = args[i + 1];
                         i++;
                     }
-                    
+
                     filteringCriteria.Add(property, value);
                 }
             }
@@ -127,12 +132,15 @@ Is lent: {book.IsLent}
         {
             if (isLent == true)
                 return books.Where(b => b.IsLent == true).ToList();
-            
+
             return books.Where(b => b.IsLent == false).ToList();
         }
 
         public async Task<string> AddNewBookAsync(List<string> args)
         {
+            if (args.Count != 7)
+                throw new ArgumentException("The number of arguments does not match");
+
             try
             {
                 var book = new Book
@@ -156,11 +164,16 @@ Is lent: {book.IsLent}
 
         public async Task<string> DeleteBookAsync(string command)
         {
+            var args = command.Split(' ');
+
+            if (args.Length != 2)
+                return "The command could not be processed.";
+
             int id = 0;
-            
+
             try
             {
-                id = int.Parse(command.Split(' ')[1]);
+                id = int.Parse(args[1]);
             }
             catch (Exception)
             {

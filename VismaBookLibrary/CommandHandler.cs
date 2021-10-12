@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 using VismaBookLibrary.DAL;
 using VismaBookLibrary.Models;
 using VismaBookLibrary.Services;
@@ -147,7 +145,8 @@ namespace VismaBookLibrary
 > delete-reader [readerId]
 > list-books
 > list-books -f-[filteringProperty] [filteringValue]
-    e.g.: list-books -f-author ""Andrew Hunt"" -f-available -f-language English
+  - Available filters: -f-author, -f-category, -f-language, -f-ISBN, -f-name, -f-taken, -f-available
+    e.g.: > list-books -f-author ""Andrew Hunt"" -f-available -f-language English
     (please note that only double-quotes are valid)
 > list-readers
 > return-book [bookId]
